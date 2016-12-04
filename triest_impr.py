@@ -2,10 +2,12 @@ from __future__ import division
 from edge_store import edgestore
 from collections import defaultdict
 import random
+import matplotlib.pyplot as plt
 
 
-class triest:
+class triest_impr:
 
+    #triest setup
     def __init__(self,M):
         self._M = M
         self._S = edgestore()
@@ -13,12 +15,11 @@ class triest:
         self._local_T = defaultdict(lambda:0)
         self._debug = True
 
-    # head_prob: probability of Heads.
-    # if Heads return True else return False
+    # Simulates flipping a coin
+    # Params: head_prob : probability of Heads
+    # Returns: if Heads return True else return False
     def flip_coin(self,head_prob):
-        #print "head probability %f"%(head_prob)
         coin_toss = random.random()
-        #print coin_toss
         if coin_toss < head_prob :
             # print "Head"
             return True
@@ -26,7 +27,10 @@ class triest:
             # print "Tail"
             return False
 
-    def update_counters(self,operation,(u,v)):
+
+    #Updates local and global counters
+    #Params:    t: timestamp,  (u,v): edge
+    def update_counters(self,t,(u,v)):
         vertices = self._S.get_vertice_list()
         if u not in vertices or v not in vertices:
             return
@@ -38,39 +42,22 @@ class triest:
 
         if shared_value == 0:
             return
+        weight_t = ((t-1)*(t-2))/(self._M * (self._M-1) )
+        if weight_t < 1:
+            weight_t = 1
+        for c in shared_neigbourhood:
+                self._local_T[c]+= weight_t
+                self._global_T += weight_t
+                self._local_T[u] += weight_t
+                self._local_T[v] += weight_t
 
-        if operation == '+':
-            self._global_T +=  shared_value
-            #print "global counter = %d. Incremented by %d"%(self._global_T,shared_value)
-            self._local_T[u] +=  shared_value
-            self._local_T[v] +=  shared_value
-
-            for c in shared_neigbourhood:
-                self._local_T[c]+= 1
-
-        if operation == '-':
-            self._global_T -= shared_value
-            #print "global counter = %d. Decremented by %d" % (self._global_T, shared_value)
-
-            self._local_T[u] -= shared_value
-            if self._local_T[u] == 0:
-                del self._local_T[u]
-
-            self._local_T[v] -= shared_value
-            if self._local_T[v] == 0:
-                del self._local_T[v]
-
-            for c in shared_neigbourhood:
-                self._local_T[c]-= 1
-            if self._local_T[c] == 0:
-                del self._local_T[c]
 
 
     # impelemts reservoir sampling
+    # Returns: if edge can be added to sample edgeset:S  else false
     def sample_edge(self,edge,t):
         # print "sample edge (%s,%s) at time %d)"%(edge[0],edge[1],t)
         if t <= self._M:
-            #print "space left for edge (%s,%s)"%(edge[0],edge[1])
             return True
 
         else:
@@ -83,16 +70,12 @@ class triest:
                 u1,v1 = edge_list[e_idx]
                 # print "edge to be removed (%s,%s)" % (u1, v1)
                 self._S.delete(u1, v1)
-                #print "after deleting edge  "
-                #print self._S.printContents()
-                self.update_counters("-",(u1,v1))
-
                 return True
 
         return False
 
-
-    def run_triest(self,datafile):
+    #Run TRIEST-IMPR
+    def run_triest_impr(self,datafile):
         t = 0
         f = open(datafile)
         for line in f:
@@ -105,31 +88,19 @@ class triest:
                 tmp = u
                 u = v
                 v = tmp
+            if (u,v) in self._S.get_edges():
+                #print "edge (%s,%s) already in sample"%(u,v)
+                continue
             t=t+1
-            # if t == 65:
-            #     print "hello"
-            #print "time %d"%(t)
+            self.update_counters(t,(u, v))
             if self.sample_edge((u,v),t):
                 self._S.add(u,v)
-                #print "after adding the store is:"
-                #print self._S.printContents()
-                self.update_counters("+",(u,v))
 
-        print "final Sample S: %s"%(self._S.printContents())
-
-        print "golbal T %d"%(self._global_T)
-        print "local T %s"%(self._local_T)
-        print "sample edge set %s"%(self._S.get_edges())
-        print "====Global Triangles %f======" % (self.estimate_triangles(t))
-
-
-    def estimate_triangles(self,t):
-        estimate = t*(t-1)*(t-2)/(self._M*(self._M-1)*(self._M-2))
-        print "Estimate: %f"%(estimate)
-        if estimate < 1:
-            estimate =1
-        return int(estimate) * self._global_T
-
+        print "M = %d" % (self._M)
+        print "Local Triangles %s"%(self._local_T)
+        print "Global Triangles = %d" % (int(self._global_T))
+        print "----------------------"
+        return int(self._global_T)
 
 def test_file(datafile):
     f = open(datafile)
@@ -137,11 +108,24 @@ def test_file(datafile):
         u, v, weight = line.split()
         print "%s,%s"%(u,v)
 
+
 if __name__ == '__main__':
-    #random.seed(1234)
+    random.seed(14)
     #datafile = "data/dummy.txt"
     #datafile = "data/out.subelj_euroroad_euroroad"
     datafile = "data/out.advogato"
-    obj = triest(40000)
-    obj.run_triest(datafile)
-    #test_file("data/out.moreno_bison_bison")
+    #datafile = "data/out.petster-friendships-hamster-uniq"
+    #M = [500,1000,1500,2000,2500,3000,3500,4000]
+    M = [3000, 6000, 9000, 12000, 15000, 18000, 21000, 24000, 27000, 30000, 40000]
+    triangles = []
+    for m in M:
+        obj = triest_impr(m)
+        count = obj.run_triest_impr(datafile)
+        triangles.append(count)
+    plt.title("TRIEST-IMPR")
+    plt.plot(M, triangles)
+    plt.xlabel("M")
+    plt.ylabel("Triangles")
+    plt.xticks(M)
+    plt.grid(True)
+    plt.show()
