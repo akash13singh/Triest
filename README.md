@@ -9,12 +9,13 @@ TRIEST-BASE
 TRIEST-IMPR
 
 Notes:
-1)We assume working with directed graphs only as the paper also mentions delaing with undirected graphs in section 2 (Preliminaries).  To handle directed graphs we process every edge (u,v) such that:
-u  <  v
-u  !=  v 
-Discard edges (u,u)
-If edge (u,v) is already present in the current edge sample S, we discard (u,v) or (v,u). 
-Evaluation with Advogato dataset, a directed graph gave good results with this handling.
+
+1) We assume working with directed graphs only as the paper also mentions delaing with undirected graphs in section 2 (Preliminaries).  To handle directed graphs we process every edge (u,v) such that:
+   u  <  v
+   u  !=  v 
+   Discard edges (u,u)
+  If edge (u,v) is already present in the current edge sample S, we discard (u,v) or (v,u). 
+ Evaluation with Advogato dataset, a directed graph gave good results with this handling.
 
 2) In evaluation we compare only the global triangles count as the test datasets provided the true value of only global triangle counts.  However the code outputs the values of local Ts and Eta for Triest-Base, and the local triangle estimates for Triest-Impr.
 
