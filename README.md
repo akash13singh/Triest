@@ -20,12 +20,13 @@ Notes:
 2) In evaluation we compare only the global triangles count as the test datasets provided the true value of only global triangle counts.  However the code outputs the values of local Ts and Eta for Triest-Base, and the local triangle estimates for Triest-Impr.
 
 #Execution Instructions:
+
 1) Run scripts triest_impr.py for Triest-Impr algorithm and triest_base for Triest-Base
-algorithm.
+   algorithm.
 2) The desired dataset and values of M can be set in variables datafile and M
-respectively in the main() method of either script.
+   respectively in the main() method of either script.
 3) The code assumes that the first two columns of the datafile are in the form:
-<source_node> <destination_node>
+   <source_node> <destination_node>
 4) The code works with space separated files and works with only the first two fields of
 each row and ignores the rest.
 
