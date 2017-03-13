@@ -33,8 +33,8 @@ TRIEST-IMPR
 2) More graph datasets can be obtained from [here](http://konect.uni-koblenz.de/).  
 
 # Results & Evaluation:
-1) Both algorithms converge to the correct value at M =40,000 but give good estimates  even with much lower values of M.
+1) Both algorithms converge to the correct value at M =40,000 but give good estimates  even with much lower values of M.  
+   *Triest Evaluation on Advogato dataset.*
    ![Triest-Base](evaluation/triest_base_advogato.png) </br>
-   ![Triest-Impr](evaluation/triest_impr_advogato.png) </br>
-*Triest Evaluation on Advogato dataset.*  
+   ![Triest-Impr](evaluation/triest_impr_advogato.png) </br>             
 2) The full evaluation and results are present in the [report](evaluation/triest_report.pdf).
