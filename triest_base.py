@@ -7,6 +7,8 @@ import matplotlib.pyplot as plt
 
 class triest_base:
 
+
+
     # triest setup
     def __init__(self,M):
         self._M = M
@@ -14,6 +16,8 @@ class triest_base:
         self._global_T = 0
         self._local_T = defaultdict(lambda:0)
         self._debug = True
+
+
 
     # Simulates flipping a coin
     # Params: head_prob : probability of Heads
@@ -26,6 +30,8 @@ class triest_base:
         else:
             # print "Tail"
             return False
+
+
 
 
     #Updates local and global counters
@@ -68,6 +74,8 @@ class triest_base:
                 del self._local_T[c]
 
 
+
+
     # impelemts reservoir sampling
     # Returns: if edge can be added to sample edgeset:S  else false
     def sample_edge(self,edge,t):
@@ -89,6 +97,9 @@ class triest_base:
                 return True
 
         return False
+
+
+
 
     # Run TRIEST-BASE
     def run_triest_base(self,datafile):

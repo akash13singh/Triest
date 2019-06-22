@@ -113,8 +113,8 @@ if __name__ == '__main__':
     random.seed(14)
     #datafile = "data/dummy.txt"
     #datafile = "data/out.subelj_euroroad_euroroad"
-    datafile = "data/out.advogato"
-    #datafile = "data/out.petster-friendships-hamster-uniq"
+    #datafile = "data/out.advogato"
+    datafile = "data/out.petster-friendships-hamster-uniq"
     #M = [500,1000,1500,2000,2500,3000,3500,4000]
     M = [3000, 6000, 9000, 12000, 15000, 18000, 21000, 24000, 27000, 30000, 40000]
     triangles = []
